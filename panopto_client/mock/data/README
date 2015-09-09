@@ -1,0 +1,9 @@
+This directory is the root of mocked data for the Panopto SOAP Client.
+
+SOAP responses are organized by directories corresponding to the request's
+port and method.  The response envelopes are contained in files with names
+that are the md5 has of method's parameters.
+
+No Data is currently supplied
+
+
