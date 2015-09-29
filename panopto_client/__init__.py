@@ -54,6 +54,8 @@ class PanoptoAPI(object):
             self._auth_user_key = settings.PANOPTO_API_APP_ID + '\\' + settings.PANOPTO_API_USER
             self._auth_token = settings.PANOPTO_API_TOKEN
         else:
+            self._api.set_options(nosend=True)
+            self._api.set_options(extraArgumentErrors=False)
             self._data = self._mock
             self._auth_user_key = ''
             self._auth_token = ''
@@ -123,5 +125,5 @@ class PanoptoAPI(object):
         return self._api.service[self._port][methodName](**params)
 
     def _mock(self, methodName, params={}):
-        reply = PanoptoMockData().mock(self._port, methodName, params)
-        return self._api.service[self._port][methodName](__inject={'reply': reply})
+        params['__inject']={'reply': PanoptoMockData().mock(self._port, methodName, params)}
+        return self._api.service[self._port][methodName](**params)

@@ -18,6 +18,7 @@ setup(
         'django',
         'suds-jurko==0.6'
     ],
+    dependency_links = ['https://github.com/uw-it-aca/uw-restclients#egg=RestClients']
     license='Apache License, Version 2.0',  # example license
     description='A django application providing access to the Panopto Video Platform SOAP API',
     long_description=README,
