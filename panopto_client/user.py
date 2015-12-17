@@ -50,3 +50,12 @@ class UserManagement(PanoptoAPI):
                                  'auth': self.authentication_info(),
                                  'userKey': user_key
                              })
+
+    def getUsers(self, user_ids):
+        userIds = self._api.factory.create('ns2:ArrayOfguid')
+        userIds.guid = user_ids
+        return self._request('GetUsers',
+                             {
+                                 'auth': self.authentication_info(),
+                                 'userIds': user_ids
+                             })
