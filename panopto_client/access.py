@@ -39,13 +39,14 @@ class AccessManagement(PanoptoAPI):
     def revokeUsersAccessFromFolder(self, folder_id, user_ids, role):
         userIds = self._api.factory.create('ns2:ArrayOfguid')
         userIds.guid = user_ids
+        accessRole = self._api.factory.create('ns0:AccessRole')[role]
 
         return self._request('RevokeUsersAccessFromFolder',
                              {
                                  'auth': self.authentication_info(),
                                  'folderId': folder_id,
                                  'userIds': userIds,
-                                 'role': role
+                                 'role': accessRole
                              })
 
     def getSessionAccessDetails(self, session_id):
