@@ -89,6 +89,14 @@ class SessionManagement(PanoptoAPI):
                                  'isPublic': 'false'
                              })
 
+    def updateFolderName(self, folder_id, name):
+        return self._request('UpdateFolderName',
+                             {
+                                 'auth': self.authentication_info(),
+                                 'folderId': folder_id,
+                                 'name': name
+                             })
+
     def updateFolderExternalId(self, folder_id, external_id):
         return self._request('UpdateFolderExternalId',
                              {
@@ -150,6 +158,17 @@ class SessionManagement(PanoptoAPI):
                                  'auth': self.authentication_info(),
                                  'sessionId': session_id,
                                  'isBroadcast': is_broadcast
+                             })
+
+    def moveSessions(self, session_ids, folder_id):
+        sessionIds = self._api.factory.create('ns6:ArrayOfguid')
+        sessionIds.guid = session_ids
+
+        return self._request('MoveSessions',
+                             {
+                                 'auth': self.authentication_info(),
+                                 'sessionIds': sessionIds,
+                                 'folderId': folder_id
                              })
 
     def deleteSessions(self, session_ids):
