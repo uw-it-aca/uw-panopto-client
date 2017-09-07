@@ -1,7 +1,7 @@
-ACA Panopto SOAP API Client
+UW Panopto SOAP API Client
 ===========================
 
-A django application providing access to the Panopto Video Platform SOAP API
+An application providing access to the Panopto Video Platform SOAP API
 
 Installation
 ------------
@@ -11,7 +11,7 @@ Installation
 Install django-panopto-client in your project.
 
     $ cd [project]
-    $ pip install -e git+https://github.com/uw-it-aca/django-panopto-client/#egg=django_panopto_client
+    $ pip install UW-Panopto-Client
 
 Project settings.py
 ------------------
