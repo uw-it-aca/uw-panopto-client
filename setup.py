@@ -15,7 +15,7 @@ VERSION = VERSION.replace("\n", "")
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='uw-panopto-client',
+    name='UW-Panopto-Client',
     version=VERSION,
     packages=['panopto_client'],
     include_package_data=True,
