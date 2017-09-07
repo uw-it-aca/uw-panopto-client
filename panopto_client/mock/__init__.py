@@ -1,9 +1,9 @@
 """
 Panopto API mock data class
 """
-from django.conf import settings
-from django.utils.importlib import import_module
-from django.utils.log import getLogger
+from commonconf import settings
+from importlib import import_module
+from logging import getLogger
 from hashlib import md5
 import sys
 import os
@@ -19,27 +19,24 @@ class PanoptoMockData(object):
     def __init__(self):
         self._log = getLogger(__name__)
 
-
         if len(PanoptoMockData.app_resource_dirs) < 1:
-            for app in settings.INSTALLED_APPS:
+            for app in getattr(settings, 'INSTALLED_APPS', []):
                 try:
                     mod = import_module(app)
                 except ImportError, e:
-                    raise ImproperlyConfigured('ImportError %s: %s' % (app, e.args[0]))
+                    raise ImproperlyConfigured('ImportError %s: %s' % (
+                        app, e.args[0]))
 
                 resource_dir = os.path.join(os.path.dirname(mod.__file__),
                                             'resources/panopto/file')
                 if os.path.isdir(resource_dir):
                     # Cheating, to make sure our resources are overridable
                     data = {
-                        'path': resource_dir.decode(PanoptoMockData.fs_encoding),
+                        'path': resource_dir.decode(
+                            PanoptoMockData.fs_encoding),
                         'app': app,
                     }
-
-                    if app == 'restclients':
-                        PanoptoMockData.app_resource_dirs.append(data)
-                    else:
-                        PanoptoMockData.app_resource_dirs.insert(0, data)
+                    PanoptoMockData.app_resource_dirs.insert(0, data)
 
     def mock(self, portName, methodName, params):
         mock_path = self._mock_file_path(portName, methodName, params)

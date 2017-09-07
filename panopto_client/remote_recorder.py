@@ -1,16 +1,14 @@
 """
 This module exposes Panopto "RemoteRecorderManagement" Service methods
 """
-from django.conf import settings
 from panopto_client import PanoptoAPI, PanoptoAPIException
 from itertools import count
-
 
 
 class RemoteRecorderManagement(PanoptoAPI):
     def __init__(self):
         super(RemoteRecorderManagement, self).__init__({
-            'wsdl': 'https://%s/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?wsdl' % (settings.PANOPTO_SERVER)
+            'wsdl': 'RemoteRecorderManagement.svc?wsdl'
         })
         self._port = 'BasicHttpBinding_IRemoteRecorderManagement'
 
@@ -34,8 +32,10 @@ class RemoteRecorderManagement(PanoptoAPI):
 
     def scheduleRecording(self, name, folder_id, is_broadcast,
                           start_time, end_time, recorder_id):
-        recorderSettings = self._api.factory.create('ns0:ArrayOfRecorderSettings')
-        recorderSettings.RecorderSettings.append(self._api.factory.create('ns0:RecorderSettings'))
+        recorderSettings = self._api.factory.create(
+            'ns0:ArrayOfRecorderSettings')
+        recorderSettings.RecorderSettings.append(
+            self._api.factory.create('ns0:RecorderSettings'))
         recorderSettings.RecorderSettings[0].RecorderId = recorder_id
 
         return self._request('ScheduleRecording', {
@@ -48,20 +48,18 @@ class RemoteRecorderManagement(PanoptoAPI):
             'recorderSettings': recorderSettings
         })
 
-    def listRecorders(self, sort_by="Name"):
-
+    def listRecorders(self, sort_by='Name'):
         result = []
 
         self._set_max_results(100)
         for page in count(0):
-            self._set_page_number(page);
+            self._set_page_number(page)
 
-            response = self._request('ListRecorders',
-                                     {
-                                         'auth': self.authentication_info(),
-                                         'pagination': self.pagination(),
-                                         'sortBy': sort_by
-                                     })
+            response = self._request('ListRecorders', {
+                'auth': self.authentication_info(),
+                'pagination': self.pagination(),
+                'sortBy': sort_by
+            })
 
             if response.PagedResults:
                 for f in response.PagedResults.RemoteRecorder:
@@ -79,7 +77,8 @@ class RemoteRecorderManagement(PanoptoAPI):
             'remoteRecorderId': remote_recorder_id
         })
 
-    # UpdateRecordingTime(ns0:AuthenticationInfo auth, ns3:guid sessionId, xs:dateTime start, xs:dateTime end, )
+    # UpdateRecordingTime(ns0:AuthenticationInfo auth, ns3:guid sessionId,
+    # xs:dateTime start, xs:dateTime end)
     def updateRecordingTime(self, session_id, start, end):
         return self._request('UpdateRecordingTime', {
             'auth': self.authentication_info(),
@@ -88,5 +87,6 @@ class RemoteRecorderManagement(PanoptoAPI):
             'end': end
         })
 
-    # ScheduleRecurringRecording(ns0:AuthenticationInfo auth, ns3:guid scheduledSessionId, ns2:ArrayOfDayOfWeek daysOfWeek, xs:dateTime end, )
-
+    # ScheduleRecurringRecording(ns0:AuthenticationInfo auth,
+    # ns3:guid scheduledSessionId, ns2:ArrayOfDayOfWeek daysOfWeek,
+    # xs:dateTime end)
