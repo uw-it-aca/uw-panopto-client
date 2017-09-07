@@ -8,7 +8,7 @@ Installation
 
 **Project directory**
 
-Install django-panopto-client in your project.
+Install uw-panopto-client in your project.
 
     $ cd [project]
     $ pip install UW-Panopto-Client
