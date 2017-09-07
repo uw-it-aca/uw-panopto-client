@@ -1,15 +1,13 @@
 """
 This module exposes Panopto "AccessManagement" Service methods
 """
-from django.conf import settings
 from panopto_client import PanoptoAPI, PanoptoAPIException
-
 
 
 class AccessManagement(PanoptoAPI):
     def __init__(self):
         super(AccessManagement, self).__init__({
-            'wsdl': 'https://%s/Panopto/PublicAPI/4.6/AccessManagement.svc?wsdl' % (settings.PANOPTO_SERVER)
+            'wsdl': 'AccessManagement.svc?wsdl'
         })
         self._port = 'BasicHttpBinding_IAccessManagement'
 
