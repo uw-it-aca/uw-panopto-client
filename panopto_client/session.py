@@ -98,6 +98,15 @@ class SessionManagement(PanoptoAPI):
             'externalId': external_id
         })
 
+    def updateFolderExternalIdWithProvider(
+            self, folder_id, external_id, site_membership_provider_name):
+        return self._request('UpdateFolderExternalIdWithProvider', {
+            'auth': self.authentication_info(),
+            'folderId': folder_id,
+            'externalId': external_id,
+            'SiteMembershipProviderName': site_membership_provider_name
+        })
+
     def updateFolderDescription(self, folder_id, description):
         return self._request('UpdateFolderDescription', {
             'auth': self.authentication_info(),
