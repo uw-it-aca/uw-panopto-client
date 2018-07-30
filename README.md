@@ -22,4 +22,3 @@ Project settings.py
     PANOPTO_API_APP_ID = '<Application context ID>'
     PANOPTO_API_TOKEN = '<Panopto GUID>'
     PANOPTO_SERVER = '<Panopto Server Name>'
-    PANOPTO_IDP_INSTANCE_NAME = '<Identity Provider Instance Name>'
