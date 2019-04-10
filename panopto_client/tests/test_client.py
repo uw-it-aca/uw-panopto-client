@@ -37,8 +37,6 @@ class PanoptoClientTest(TestCase):
         # Nonexistent attribute fails normally
         self.assertRaises(AttributeError, getattr, client, '_fail')
 
-        # _api attribute does not exist
-        self.assertFalse(hasattr(client, '_api'))
-
         # Connection error
+        self.assertRaises(PanoptoAPIException, hasattr, client, '_api')
         self.assertRaises(PanoptoAPIException, getattr, client, '_api')

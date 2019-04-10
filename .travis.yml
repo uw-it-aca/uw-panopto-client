@@ -1,7 +1,6 @@
 sudo: false
 language: python
 python:
-- '2.7'
 - '3.6'
 before_script:
 - pip install -e .
@@ -11,7 +10,7 @@ before_script:
 - pip install commonconf
 - pip install coveralls
 script:
-- pycodestyle --exclude=panopto_client/tests panopto_client
+- pycodestyle panopto_client
 - coverage run panopto_client/test.py -v
 after_script:
 - coveralls

@@ -20,7 +20,7 @@ setup(
     packages=['panopto_client'],
     include_package_data=True,
     install_requires = [
-        'commonconf>=0.6',
+        'commonconf>=1.0',
         'suds-jurko==0.6',
     ],
     license='Apache License, Version 2.0',
@@ -36,7 +36,6 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
     ],
 )
