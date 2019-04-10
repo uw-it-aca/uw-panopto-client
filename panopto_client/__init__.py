@@ -11,8 +11,7 @@ from weakref import WeakValueDictionary
 from hashlib import sha1
 import sys
 
-
-url_base = '/Panopto/PublicAPI/4.6'
+URL_BASE = '/Panopto/PublicAPI/4.6'
 
 
 class PanoptoAPIException(Exception):
@@ -44,34 +43,47 @@ class PanoptoAPI(object):
     """Panopto API base
        For help, see: http://support.panopto.com/pages/PanoptoApiHelp
     """
-    def __init__(self, options={}):
+    def __init__(self, wsdl='', port=None):
         if hasattr(settings, 'PANOPTO_SERVER'):
             self._panopto_server = settings.PANOPTO_SERVER.lower()
         else:
             self._panopto_server = 'localhost'
 
-        self._wsdl = 'https://%s%s/%s' % (
-            self._panopto_server, url_base, options.get('wsdl', ''))
+        self._wsdl = 'https://{host}{path}/{wsdl}'.format(
+            host=self._panopto_server, path=URL_BASE, wsdl=wsdl)
         self._log = getLogger('client')
-        self._api = Client(self._wsdl)
-        self._api.set_options(cachingpolicy=0)
         self._page_max_results = 100
         self._page_number = 0
         self._actas = None
+        self._port = port
 
         if (hasattr(settings, 'PANOPTO_API_APP_ID') and
                 hasattr(settings, 'PANOPTO_API_USER') and
                 hasattr(settings, 'PANOPTO_API_TOKEN')):
             self._data = self._live
-            self._auth_user_key = '%s\\%s' % (
+            self._auth_user_key = '{}\\{}'.format(
                 settings.PANOPTO_API_APP_ID, settings.PANOPTO_API_USER)
             self._auth_token = settings.PANOPTO_API_TOKEN
         else:
-            self._api.set_options(nosend=True)
-            self._api.set_options(extraArgumentErrors=False)
             self._data = self._mock
             self._auth_user_key = ''
             self._auth_token = ''
+
+    def __getattr__(self, name, *args, **kwargs):
+        if name == '_api':
+            try:
+                self._api = Client(self._wsdl)
+                self._api.set_options(cachingpolicy=0)
+                if self._data == self._mock:
+                    self._api.set_options(nosend=True)
+                    self._api.set_options(extraArgumentErrors=False)
+                return self._api
+            except Exception as err:
+                raise PanoptoAPIException("Cannot connect to '{}': {}".format(
+                    self._wsdl, err))
+
+        raise AttributeError("'{}' object has no attribute '{}'".format(
+            self.__class__.__name__, name))
 
     def auth_user_key(self):
         if self._actas and len(self._actas):
@@ -113,23 +125,24 @@ class PanoptoAPI(object):
             return self._data(methodName, params)
         except WebFault as err:
             self._log.exception(err)
-            raise PanoptoAPIException(
-                'Cannot connect to the Panopto server: %s' % err)
+            raise PanoptoAPIException("Cannot connect to '{}': {}".format(
+                    self._wsdl, err))
         except Exception as err:
-            self._log.error('Error: (%s) %s' % (err, str(sys.exc_info()[0])))
+            self._log.error('Error: ({}) {}'.format(
+                err, str(sys.exc_info()[0])))
 
             if type(err.args[0]) is tuple and type(err.args[0][0]) is int:
                 if err.args[0][0] in [401, 403]:
-                    errmsg = 'The request cannot be authenticated (%s)' % (
+                    errmsg = 'The request cannot be authenticated ({})'.format(
                         err.args[0][0])
                 if err.args[0][0] in [404, 405, 406, 500]:
-                    errmsg = 'The server is currently unavailable (%s)' % (
+                    errmsg = 'The server is currently unavailable ({})'.format(
                         err.args[0][0])
                 else:
-                    errmsg = 'Unanticipated error: %s (%s)' % (
+                    errmsg = 'Unanticipated error: {} ({})'.format(
                         err.args[0][1], err.args[0][0])
             else:
-                errmsg = 'Error connecting: %s' % (err)
+                errmsg = 'Error connecting: {}'.format(err)
 
             raise PanoptoAPIException(errmsg)
 

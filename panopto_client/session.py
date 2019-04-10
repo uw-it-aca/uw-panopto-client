@@ -7,10 +7,9 @@ from itertools import count
 
 class SessionManagement(PanoptoAPI):
     def __init__(self):
-        super(SessionManagement, self).__init__({
-            'wsdl': 'SessionManagement.svc?wsdl'
-        })
-        self._port = 'BasicHttpBinding_ISessionManagement'
+        super(SessionManagement, self).__init__(
+            wsdl='SessionManagement.svc?wsdl',
+            port='BasicHttpBinding_ISessionManagement')
 
     # override for auth and pagination types
     def authentication_instance(self):

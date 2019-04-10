@@ -7,10 +7,9 @@ from itertools import count
 
 class RemoteRecorderManagement(PanoptoAPI):
     def __init__(self):
-        super(RemoteRecorderManagement, self).__init__({
-            'wsdl': 'RemoteRecorderManagement.svc?wsdl'
-        })
-        self._port = 'BasicHttpBinding_IRemoteRecorderManagement'
+        super(RemoteRecorderManagement, self).__init__(
+            wsdl='RemoteRecorderManagement.svc?wsdl',
+            port='BasicHttpBinding_IRemoteRecorderManagement')
 
     def getRemoteRecordersById(self, remote_recorder_id):
         remoteRecorderIds = self._api.factory.create('ns4:ArrayOfguid')

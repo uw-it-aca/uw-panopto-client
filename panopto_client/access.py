@@ -6,10 +6,9 @@ from panopto_client import PanoptoAPI, PanoptoAPIException
 
 class AccessManagement(PanoptoAPI):
     def __init__(self):
-        super(AccessManagement, self).__init__({
-            'wsdl': 'AccessManagement.svc?wsdl'
-        })
-        self._port = 'BasicHttpBinding_IAccessManagement'
+        super(AccessManagement, self).__init__(
+            wsdl='AccessManagement.svc?wsdl',
+            port='BasicHttpBinding_IAccessManagement')
 
     def getFolderAccessDetails(self, folder_id):
         id = self._api.factory.create('ns1:guid')

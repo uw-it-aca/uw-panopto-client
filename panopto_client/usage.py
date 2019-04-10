@@ -7,10 +7,9 @@ from itertools import count
 
 class UsageReporting(PanoptoAPI):
     def __init__(self):
-        super(UsageReporting, self).__init__({
-            'wsdl': 'UsageReporting.svc?wsdl'
-        })
-        self._port = 'BasicHttpBinding_IUsageReporting'
+        super(UsageReporting, self).__init__(
+            wsdl='UsageReporting.svc?wsdl',
+            port='BasicHttpBinding_IUsageReporting')
 
     def getUserDetailedUsage(self, user_id):
         result = []

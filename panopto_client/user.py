@@ -7,10 +7,9 @@ from itertools import count
 
 class UserManagement(PanoptoAPI):
     def __init__(self):
-        super(UserManagement, self).__init__({
-            'wsdl': 'UserManagement.svc?wsdl'
-        })
-        self._port = 'BasicHttpBinding_IUserManagement'
+        super(UserManagement, self).__init__(
+            wsdl='UserManagement.svc?wsdl',
+            port='BasicHttpBinding_IUserManagement')
 
     def listUsers(self, search_query='', sort_by='UserKey',
                   sort_increasing='true'):
