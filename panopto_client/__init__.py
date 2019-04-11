@@ -91,17 +91,17 @@ class PanoptoAPI(object):
 
         return self._auth_user_key
 
-    def _auth_code(self):
-        payload = self.auth_user_key() + '@' + self._panopto_server
-        signed_payload = payload + '|' + self._auth_token
-        return sha1(signed_payload).hexdigest().upper()
+    def auth_code(self):
+        signed_payload = '{}@{}|{}'.format(
+            self.auth_user_key(), self._panopto_server, self._auth_token)
+        return sha1(signed_payload.encode('utf-8')).hexdigest().upper()
 
     def authentication_instance(self):
         return self._api.factory.create('ns0:AuthenticationInfo')
 
     def authentication_info(self):
         auth = self.authentication_instance()
-        auth.AuthCode = self._auth_code()
+        auth.AuthCode = self.auth_code()
         auth.UserKey = self.auth_user_key()
         return auth
 
