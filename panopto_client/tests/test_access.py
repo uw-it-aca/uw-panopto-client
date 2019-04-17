@@ -1,45 +1,60 @@
 from unittest import TestCase
-from commonconf import override_settings
 from panopto_client.access import AccessManagement, PanoptoAPIException
+from panopto_client.tests import instance_args
+import mock
 
 
-@override_settings(PANOPTO_SERVER='localhost')
-class PanoptoAccessLiveTest(TestCase):
-    @override_settings(PANOPTO_API_APP_ID='test-api-app-id',
-                       PANOPTO_API_USER='test-api-user',
-                       PANOPTO_API_TOKEN='test-api-token')
-    def test_init(self):
+@mock.patch.object(AccessManagement, '_instance',
+                   return_value=mock.sentinel.instance)
+@mock.patch.object(AccessManagement, '_request')
+class PanoptoAccessTest(TestCase):
+    def test_init(self, mock_request, mock_instance):
         client = AccessManagement()
         self.assertEqual(client._port, 'BasicHttpBinding_IAccessManagement')
         self.assertEqual(client._actas, None)
         self.assertEqual(client._data, client._live)
 
-    def test_getFolderAccessDetails(self):
+    def test_getFolderAccessDetails(self, mock_request, mock_instance):
         client = AccessManagement()
-        self.assertRaises(
-            PanoptoAPIException, client.getFolderAccessDetails,
-            'test_folder_id')
+        result = client.getFolderAccessDetails('test-folder-id')
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns0:AuthenticationInfo'])
+        mock_request.assert_called_with('GetFolderAccessDetails', {
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id'})
 
-    def test_grantUsersAccessToFolder(self):
+    def test_grantUsersAccessToFolder(self, mock_request, mock_instance):
         client = AccessManagement()
-        self.assertRaises(
-            PanoptoAPIException, client.grantUsersAccessToFolder,
-            'test_folder_id', ['user_id_1'], 'test_role')
+        result = client.grantUsersAccessToFolder(
+            'test-folder-id', ['user-id-1'], 'test-role')
+        self.assertEqual(instance_args(mock_instance.call_args_list), [
+            'ns0:AccessRole', 'ns0:AuthenticationInfo', 'ns2:ArrayOfguid'])
+        mock_request.assert_called_with('GrantUsersAccessToFolder', {
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
+            'userIds': mock.sentinel.instance, 'role': 'test-role'})
 
-    def test_revokeUsersAccessFromFolder(self):
+    def test_revokeUsersAccessFromFolder(self, mock_request, mock_instance):
         client = AccessManagement()
-        self.assertRaises(
-            PanoptoAPIException, client.revokeUsersAccessFromFolder,
-            'test_folder_id', ['user_id_1'], 'test_role')
+        result = client.revokeUsersAccessFromFolder(
+            'test-folder-id', ['user-id-1'], 'test-role')
+        self.assertEqual(instance_args(mock_instance.call_args_list), [
+            'ns0:AccessRole', 'ns0:AuthenticationInfo', 'ns2:ArrayOfguid'])
+        mock_request.assert_called_with('RevokeUsersAccessFromFolder', {
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
+            'userIds': mock.sentinel.instance, 'role': 'test-role'})
 
-    def test_getSessionAccessDetails(self):
+    def test_getSessionAccessDetails(self, mock_request, mock_instance):
         client = AccessManagement()
-        self.assertRaises(
-            PanoptoAPIException, client.getSessionAccessDetails,
-            'test_session_id')
+        result = client.getSessionAccessDetails('test-session-id')
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns0:AuthenticationInfo'])
+        mock_request.assert_called_with('GetSessionAccessDetails', {
+            'auth': mock.sentinel.instance, 'sessionId': 'test-session-id'})
 
-    def test_updateSessionIsPublic(self):
+    def test_updateSessionIsPublic(self, mock_request, mock_instance):
         client = AccessManagement()
-        self.assertRaises(
-            PanoptoAPIException, client.updateSessionIsPublic,
-            'test_session_id', True)
+        result = client.updateSessionIsPublic('test-session-id', True)
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns0:AuthenticationInfo'])
+        mock_request.assert_called_with('UpdateSessionIsPublic', {
+            'auth': mock.sentinel.instance, 'sessionId': 'test-session-id',
+            'isPublic': True})

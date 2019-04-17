@@ -22,6 +22,7 @@ setup(
     install_requires = [
         'commonconf>=1.0',
         'suds-jurko==0.6',
+        'mock',
     ],
     license='Apache License, Version 2.0',
     description='An application providing access to the Panopto Video Platform SOAP API',

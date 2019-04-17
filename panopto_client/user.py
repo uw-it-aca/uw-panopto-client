@@ -13,8 +13,8 @@ class UserManagement(PanoptoAPI):
 
     def listUsers(self, search_query='', sort_by='UserKey',
                   sort_increasing='true'):
-        parameters = self._api.factory.create('ns0:ListUsersRequest')
-        parameters.SortBy = self._api.factory.create('ns0:UserSortField')
+        parameters = self._instance('ns0:ListUsersRequest')
+        parameters.SortBy = self._instance('ns0:UserSortField')
         parameters.SortBy = sort_by,
         parameters.SortIncreasing = sort_increasing
 
@@ -48,10 +48,7 @@ class UserManagement(PanoptoAPI):
         })
 
     def getUsers(self, user_ids):
-        userIds = self._api.factory.create('ns2:ArrayOfguid')
-        userIds.guid = user_ids
-
         return self._request('GetUsers', {
             'auth': self.authentication_info(),
-            'userIds': userIds
+            'userIds': self.guid_list(guids=user_ids)
         })

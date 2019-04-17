@@ -11,32 +11,27 @@ class RemoteRecorderManagement(PanoptoAPI):
             wsdl='RemoteRecorderManagement.svc?wsdl',
             port='BasicHttpBinding_IRemoteRecorderManagement')
 
-    def getRemoteRecordersById(self, remote_recorder_id):
-        remoteRecorderIds = self._api.factory.create('ns4:ArrayOfguid')
-        remoteRecorderIds.guid = [remote_recorder_id]
+    def recorder_settings(self, recorder_id):
+        obj = self._instance('ns0:ArrayOfRecorderSettings')
+        obj.RecorderSettings.append(self._instance('ns0:RecorderSettings'))
+        obj.RecorderSettings[0].RecorderId = recorder_id
+        return obj
 
+    def getRemoteRecordersById(self, remote_recorder_id):
         return self._request('GetRemoteRecordersById', {
             'auth': self.authentication_info(),
-            'remoteRecorderIds': remoteRecorderIds
+            'remoteRecorderIds': self.guid_list(
+                ns='ns4:ArrayOfguid', guids=[remote_recorder_id]),
         })
 
     def getRemoteRecordersByExternalId(self, external_id):
-        externalIds = self._api.factory.create('ns4:ArrayOfstring')
-        externalIds.string = [external_id]
-
         return self._request('GetRemoteRecordersByExternalId', {
             'auth': self.authentication_info(),
-            'externalIds': externalIds
+            'externalIds': self.parameter_list(params=[external_id]),
         })
 
     def scheduleRecording(self, name, folder_id, is_broadcast,
                           start_time, end_time, recorder_id):
-        recorderSettings = self._api.factory.create(
-            'ns0:ArrayOfRecorderSettings')
-        recorderSettings.RecorderSettings.append(
-            self._api.factory.create('ns0:RecorderSettings'))
-        recorderSettings.RecorderSettings[0].RecorderId = recorder_id
-
         return self._request('ScheduleRecording', {
             'auth': self.authentication_info(),
             'name': name,
@@ -44,7 +39,7 @@ class RemoteRecorderManagement(PanoptoAPI):
             'isBroadcast': is_broadcast,
             'start': start_time,
             'end': end_time,
-            'recorderSettings': recorderSettings
+            'recorderSettings': self.recorder_settings(recorder_id),
         })
 
     def listRecorders(self, sort_by='Name'):

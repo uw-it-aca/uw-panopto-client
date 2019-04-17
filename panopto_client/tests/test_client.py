@@ -1,31 +1,15 @@
 from unittest import TestCase
-from commonconf import override_settings
 from panopto_client import PanoptoAPI, PanoptoAPIException, URL_BASE
 
 
-@override_settings(PANOPTO_SERVER='localhost')
-class PanoptoMockClientTest(TestCase):
-    def test_init_mock(self):
-        client = PanoptoAPI(wsdl='test_wsdl', port='test_port')
-        self.assertEqual(client._panopto_server, 'localhost')
-        self.assertEqual(
-            client._wsdl, 'https://localhost{}/test_wsdl'.format(
-                URL_BASE))
-        self.assertEqual(client._port, 'test_port')
-        self.assertEqual(client._actas, None)
-        self.assertEqual(client._data, client._mock)
-        self.assertEqual(client._auth_user_key, '')
-        self.assertEqual(client._auth_token, '')
-
-
-@override_settings(PANOPTO_SERVER='localhost',
-                   PANOPTO_API_APP_ID='test-api-app-id',
-                   PANOPTO_API_USER='test-api-user',
-                   PANOPTO_API_TOKEN='test-api-token')
 class PanoptoLiveClientTest(TestCase):
     def test_init_live(self):
         client = PanoptoAPI(wsdl='test_wsdl', port='test_port')
         self.assertEqual(client._port, 'test_port')
+        self.assertEqual(client._panopto_server, 'localhost')
+        self.assertEqual(
+            client._wsdl, 'https://localhost{}/test_wsdl'.format(
+                URL_BASE))
         self.assertEqual(client._actas, None)
         self.assertEqual(client._data, client._live)
         self.assertEqual(

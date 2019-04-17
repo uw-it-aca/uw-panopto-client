@@ -6,7 +6,7 @@ from logging import getLogger
 from suds.client import Client
 from suds.xsd.schema import Schema
 from suds import WebFault
-from panopto_client.mock import PanoptoMockData
+from panopto_client.mock_data import PanoptoMockData
 from weakref import WeakValueDictionary
 from hashlib import sha1
 import sys
@@ -96,29 +96,36 @@ class PanoptoAPI(object):
             self.auth_user_key(), self._panopto_server, self._auth_token)
         return sha1(signed_payload.encode('utf-8')).hexdigest().upper()
 
-    def authentication_instance(self):
-        return self._api.factory.create('ns0:AuthenticationInfo')
+    def authentication_info(self, ns='ns0:AuthenticationInfo'):
+        obj = self._instance(ns)
+        obj.AuthCode = self.auth_code()
+        obj.UserKey = self.auth_user_key()
+        return obj
 
-    def authentication_info(self):
-        auth = self.authentication_instance()
-        auth.AuthCode = self.auth_code()
-        auth.UserKey = self.auth_user_key()
-        return auth
+    def pagination(self, ns='ns1:Pagination'):
+        obj = self._instance(ns)
+        obj.MaxNumberResults = self._page_max_results
+        obj.PageNumber = self._page_number
+        return obj
 
-    def pagination_instance(self):
-        return self._api.factory.create('ns0:Pagination')
+    def parameter_list(self, ns='ns4:ArrayOfstring', params=[]):
+        obj = self._instance(ns)
+        obj.string = params
+        return obj
 
-    def pagination(self):
-        pagination = self.pagination_instance()
-        pagination.MaxNumberResults = self._page_max_results
-        pagination.PageNumber = self._page_number
-        return pagination
+    def guid_list(self, ns='ns2:ArrayOfguid', guids=[]):
+        obj = self._instance(ns)
+        obj.guid = guids
+        return obj
 
     def _set_page_number(self, page_number):
         self._page_number = int(page_number)
 
     def _set_max_results(self, max_results):
         self._page_max_results = int(max_results)
+
+    def _instance(self, namespace):
+        return self._api.factory.create(namespace)
 
     def _request(self, methodName, params={}):
         try:
