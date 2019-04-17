@@ -1,5 +1,9 @@
-UW Panopto SOAP API Client
-===========================
+# UW Panopto SOAP API Client
+
+[![Build Status](https://api.travis-ci.org/uw-it-aca/uw-panopto-client.svg?branch=master)](https://travis-ci.org/uw-it-aca/uw-panopto-client)
+[![Coverage Status](https://coveralls.io/repos/github/uw-it-aca/uw-panopto-client/badge.svg?branch=master)](https://coveralls.io/github/uw-it-aca/uw-panopto-client?branch=master)
+[![PyPi Version](https://img.shields.io/pypi/v/uw-panopto-client.svg)](https://pypi.python.org/pypi/uw-panopto-client)
+![Python versions](https://img.shields.io/pypi/pyversions/uw-panopto-client.svg)
 
 An application providing access to the Panopto Video Platform SOAP API
 
