@@ -57,9 +57,9 @@ class PanoptoAPI(object):
         self._actas = None
         self._port = port
 
-        if (hasattr(settings, 'PANOPTO_API_APP_ID') and
-                hasattr(settings, 'PANOPTO_API_USER') and
-                hasattr(settings, 'PANOPTO_API_TOKEN')):
+        if (getattr(settings, 'PANOPTO_API_APP_ID') is not None and
+                getattr(settings, 'PANOPTO_API_USER') is not None and
+                getattr(settings, 'PANOPTO_API_TOKEN') is not None):
             self._data = self._live
             self._auth_user_key = '{}\\{}'.format(
                 settings.PANOPTO_API_APP_ID, settings.PANOPTO_API_USER)

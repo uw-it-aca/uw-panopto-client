@@ -1,5 +1,17 @@
 from unittest import TestCase
+from commonconf import override_settings
 from panopto_client import PanoptoAPI, PanoptoAPIException, URL_BASE
+
+
+@override_settings(PANOPTO_API_APP_ID=None,
+                   PANOPTO_API_USER=None,
+                   PANOPTO_API_TOKEN=None)
+class PanoptoMockClientTest(TestCase):
+    def test_init_mock(self):
+        client = PanoptoAPI(wsdl='test_wsdl', port='test_port')
+        self.assertEqual(client._data, client._mock)
+        self.assertEqual(client._auth_user_key, '')
+        self.assertEqual(client._auth_token, '')
 
 
 class PanoptoLiveClientTest(TestCase):
