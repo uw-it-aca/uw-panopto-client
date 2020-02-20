@@ -24,7 +24,7 @@ class PanoptoMockData(object):
                 try:
                     mod = import_module(app)
                 except ImportError as ex:
-                    raise ImproperlyConfigured('ImportError %s: %s' % (
+                    raise ImproperlyConfigured('ImportError {}: {}'.format(
                         app, ex.args[0]))
 
                 resource_dir = os.path.join(os.path.dirname(mod.__file__),
@@ -91,4 +91,4 @@ class PanoptoMockData(object):
         :param dir_file_name: a string to be processed
         :return: a string with all the reserved characters replaced
         """
-        return re.sub('[\?|<>=:*,;+&"@]', '_', dir_file_name)
+        return re.sub(r'[\?|<>=:*,;+&"@]', '_', dir_file_name)
