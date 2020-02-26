@@ -49,22 +49,24 @@ class PanoptoAPI(object):
         else:
             self._panopto_server = 'localhost'
 
-        self._wsdl = 'https://{host}{path}/{wsdl}'.format(
-            host=self._panopto_server, path=URL_BASE, wsdl=wsdl)
         self._log = getLogger('client')
         self._page_max_results = 100
         self._page_number = 0
         self._actas = None
         self._port = port
 
-        if (getattr(settings, 'PANOPTO_API_APP_ID') is not None and
-                getattr(settings, 'PANOPTO_API_USER') is not None and
-                getattr(settings, 'PANOPTO_API_TOKEN') is not None):
+        if (getattr(settings, 'PANOPTO_API_APP_ID', None) is not None and
+                getattr(settings, 'PANOPTO_API_USER', None) is not None and
+                getattr(settings, 'PANOPTO_API_TOKEN', None) is not None):
+            self._wsdl = 'https://{host}{path}/{wsdl}'.format(
+                host=self._panopto_server, path=URL_BASE, wsdl=wsdl)
             self._data = self._live
             self._auth_user_key = '{}\\{}'.format(
                 settings.PANOPTO_API_APP_ID, settings.PANOPTO_API_USER)
             self._auth_token = settings.PANOPTO_API_TOKEN
         else:
+            self._wsdl = PanoptoMockData().wsdl('{path}/{wsdl}'.format(
+                path=URL_BASE, wsdl=wsdl))
             self._data = self._mock
             self._auth_user_key = ''
             self._auth_token = ''
@@ -77,6 +79,7 @@ class PanoptoAPI(object):
                 if self._data == self._mock:
                     self._api.set_options(nosend=True)
                     self._api.set_options(extraArgumentErrors=False)
+
                 return self._api
             except Exception as err:
                 raise PanoptoAPIException("Cannot connect to '{}': {}".format(
@@ -157,7 +160,8 @@ class PanoptoAPI(object):
         return self._api.service[self._port][methodName](**params)
 
     def _mock(self, methodName, params={}):
+        injecting = PanoptoMockData().mock(self._port, methodName, params)
         params['__inject'] = {
-            'reply': PanoptoMockData().mock(self._port, methodName, params)
+            'reply': injecting
         }
         return self._api.service[self._port][methodName](**params)

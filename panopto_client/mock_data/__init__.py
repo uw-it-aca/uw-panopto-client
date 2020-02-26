@@ -23,6 +23,9 @@ class PanoptoMockData(object):
             for app in getattr(settings, 'INSTALLED_APPS', []):
                 try:
                     mod = import_module(app)
+                except ModuleNotFoundError as ex:
+                    mod = import_module('.'.join(app.split('.')[0:-1]))
+
                 except ImportError as ex:
                     raise ImproperlyConfigured('ImportError {}: {}'.format(
                         app, ex.args[0]))
@@ -32,11 +35,19 @@ class PanoptoMockData(object):
                 if os.path.isdir(resource_dir):
                     # Cheating, to make sure our resources are overridable
                     data = {
-                        'path': resource_dir.decode(
-                            PanoptoMockData.fs_encoding),
+                        'path': resource_dir,
                         'app': app,
                     }
                     PanoptoMockData.app_resource_dirs.insert(0, data)
+
+    def wsdl(self, path):
+        for resource in PanoptoMockData.app_resource_dirs:
+            resource_file = os.path.join(
+                resource['path'], path.strip('/')).split('?', 1)[0]
+            if os.stat(self.convert_to_platform_safe(resource_file)):
+                return "file://{}".format(resource_file)
+
+        return ''
 
     def mock(self, portName, methodName, params):
         mock_path = self._mock_file_path(portName, methodName, params)
@@ -54,11 +65,9 @@ class PanoptoMockData(object):
             self.convert_to_platform_safe(orig_file_path),
         ]
 
-        file_path = None
         handle = None
         for path in paths:
             try:
-                file_path = path
                 handle = open(path)
                 break
             except IOError as ex:
@@ -84,7 +93,7 @@ class PanoptoMockData(object):
             if k not in ignored:
                 normalized[k] = params[k]
 
-        return str(normalized)
+        return str(normalized).encode('utf-8')
 
     def convert_to_platform_safe(self, dir_file_name):
         """
