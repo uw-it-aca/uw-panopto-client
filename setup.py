@@ -21,7 +21,7 @@ setup(
     include_package_data=True,
     install_requires = [
         'commonconf>=1.0',
-        'suds-py3',
+        'suds-jurko==0.6',
         'mock',
     ],
     license='Apache License, Version 2.0',
