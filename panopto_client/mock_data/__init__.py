@@ -54,9 +54,9 @@ class PanoptoMockData(object):
         for resource in PanoptoMockData.app_resource_dirs:
             mock_data = self._load_mock_resource_from_path(resource, mock_path)
             if mock_data:
-                return mock_data
+                return mock_data.encode('utf-8')
 
-        return ''
+        return "".encode('utf-8')
 
     def _load_mock_resource_from_path(self, resource_dir, resource_path):
         orig_file_path = os.path.join(resource_dir['path'], resource_path)
