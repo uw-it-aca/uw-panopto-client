@@ -22,7 +22,7 @@ class PanoptoUserManagementTest(TestCase):
             pass
         self.assertEqual(instance_args(mock_instance.call_args_list), [
             'ns0:AuthenticationInfo', 'ns0:ListUsersRequest',
-            'ns0:UserSortField', 'ns0:Pagination'])
+            'ns0:Pagination', 'ns0:UserSortField'])
         mock_request.assert_called_with('ListUsers', {
             'auth': mock.sentinel.instance,
             'parameters': mock.sentinel.instance, 'searchQuery': 'test query'})
