@@ -2,7 +2,7 @@
 Base module to support exposing Panopto SOAP Service methods
 """
 from commonconf import settings
-from logging import getLogger, INFO
+from logging import getLogger
 from suds.client import Client
 from suds.xsd.schema import Schema
 from suds import WebFault
@@ -50,7 +50,6 @@ class PanoptoAPI(object):
             self._panopto_server = 'localhost'
 
         self._log = getLogger('client')
-        self._log.setLevel(INFO)
         self._page_max_results = 100
         self._page_number = 0
         self._actas = None
@@ -106,7 +105,7 @@ class PanoptoAPI(object):
         obj.UserKey = self.auth_user_key()
         return obj
 
-    def pagination(self, ns='ns1:Pagination'):
+    def pagination(self, ns='ns0:Pagination'):
         obj = self._instance(ns)
         obj.MaxNumberResults = self._page_max_results
         obj.PageNumber = self._page_number

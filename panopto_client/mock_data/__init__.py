@@ -3,7 +3,6 @@ Panopto API mock data class
 """
 from commonconf import settings
 from importlib import import_module
-from logging import getLogger
 from hashlib import md5
 import sys
 import os
@@ -17,8 +16,6 @@ class PanoptoMockData(object):
     app_resource_dirs = []
 
     def __init__(self):
-        self._log = getLogger(__name__)
-
         if len(PanoptoMockData.app_resource_dirs) < 1:
             for app in getattr(settings, 'INSTALLED_APPS', []):
                 try:
@@ -82,8 +79,8 @@ class PanoptoMockData(object):
         return mock_data
 
     def _mock_file_path(self, portName, methodName, params):
-        return os.path.join(portName, methodName,
-                            md5(self._normalize(params)).hexdigest().upper())
+        return os.path.join(portName, methodName, md5(
+            self._normalize(params).encode('utf-8')).hexdigest().upper())
 
     def _normalize(self, params):
         ignored = ['auth']
@@ -93,7 +90,7 @@ class PanoptoMockData(object):
             if k not in ignored:
                 normalized[k] = params[k]
 
-        return str(normalized).encode('utf-8')
+        return str(normalized)
 
     def convert_to_platform_safe(self, dir_file_name):
         """
