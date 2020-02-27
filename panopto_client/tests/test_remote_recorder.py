@@ -60,7 +60,7 @@ class RemoteRecorderManagementTest(TestCase):
         except TypeError:
             pass
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns1:Pagination'])
+            'ns0:AuthenticationInfo', 'ns0:Pagination'])
         mock_request.assert_called_with('ListRecorders', {
             'auth': mock.sentinel.instance,
             'pagination': mock.sentinel.instance, 'sortBy': 'Name'})
