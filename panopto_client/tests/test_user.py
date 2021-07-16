@@ -1,3 +1,6 @@
+# Copyright 2021 UW-IT, University of Washington
+# SPDX-License-Identifier: Apache-2.0
+
 from unittest import TestCase
 from panopto_client.user import UserManagement, PanoptoAPIException
 from panopto_client.tests import instance_args
