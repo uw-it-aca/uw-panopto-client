@@ -90,8 +90,10 @@ class PanoptoMockData(object):
         return {k: params[k] for k in params if k not in excluded}
 
     def _param_hash(self, params):
-        h = md5(json.dumps(self._normalized(params), sort_keys=True).encode())
-        return h.hexdigest().upper()
+        return md5(json.dumps(
+            self._normalized(params),
+            default=lambda o: re.sub(r"[\s]*", "", str(o)),
+            sort_keys=True).encode()).hexdigest().upper()
 
     def convert_to_platform_safe(self, dir_file_name):
         """
