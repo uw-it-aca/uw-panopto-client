@@ -1,4 +1,4 @@
-# Copyright 2021 UW-IT, University of Washington
+# Copyright 2022 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -10,6 +10,7 @@ from hashlib import md5
 import sys
 import os
 import re
+import json
 from os.path import abspath, dirname
 
 
@@ -82,18 +83,15 @@ class PanoptoMockData(object):
         return mock_data
 
     def _mock_file_path(self, portName, methodName, params):
-        return os.path.join(portName, methodName, md5(
-            self._normalize(params).encode('utf-8')).hexdigest().upper())
+        return os.path.join(portName, methodName, self._param_hash(params))
 
-    def _normalize(self, params):
-        ignored = ['auth']
-        normalized = {}
+    def _normalized(self, params):
+        excluded = {'auth'}
+        return {k: params[k] for k in params if k not in excluded}
 
-        for k in sorted(params.keys()):
-            if k not in ignored:
-                normalized[k] = params[k]
-
-        return str(normalized)
+    def _param_hash(self, params):
+        h = md5(json.dumps(self._normalized(params), sort_keys=True).encode())
+        return h.hexdigest().upper()
 
     def convert_to_platform_safe(self, dir_file_name):
         """
