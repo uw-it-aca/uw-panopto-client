@@ -19,15 +19,15 @@ setup(
     packages=['panopto_client'],
     include_package_data=True,
     install_requires = [
-        'commonconf>=1.0',
-        'suds-jurko==0.6',
+        'suds-py3~=1.4',
+        'commonconf',
         'mock',
     ],
     license='Apache License, Version 2.0',
     description='An application providing access to the Panopto Video Platform SOAP API',
     long_description=README,
     url='https://github.com/uw-it-aca/uw-panopto-client',
-    author = "UW-IT AXDD",
+    author = "UW-IT T&LS",
     author_email = "aca-it@uw.edu",
     classifiers=[
         'Environment :: Web Environment',
@@ -36,6 +36,5 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
     ],
 )
