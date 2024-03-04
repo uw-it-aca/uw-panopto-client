@@ -24,6 +24,7 @@ name: tests
 
 env:
   APP_NAME: panopto_client
+  COVERAGE_PYTHON_VERSION: '3.10'
 
 on:
   push:
@@ -37,22 +38,29 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        python-version:
+          - '3.8'
+          - '3.9'
+          - '3.10'
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.6
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .
-          pip install commonconf nose2 coverage coveralls==2.2.0
+          pip install commonconf nose2 coverage coveralls==3.3.1
 
       - name: Run Python Linters
         uses: uw-it-aca/actions/python-linters@main
@@ -62,9 +70,10 @@ jobs:
       - name: Run Tests
         run: |
           python -m compileall ${APP_NAME}/
-          coverage run ${APP_NAME}/test.py -v
+          python -Wd -m coverage run ${APP_NAME}/test.py -v
 
       - name: Report Test Coverage
+        if: matrix.python-version == env.COVERAGE_PYTHON_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -75,16 +84,16 @@ jobs:
 
     needs: test
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.10'
 
       - name: Publish to PyPi
         uses: uw-it-aca/actions/publish-pypi@main
