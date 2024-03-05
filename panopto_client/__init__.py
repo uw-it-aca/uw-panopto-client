@@ -24,12 +24,13 @@ class PanoptoAPIException(Exception):
 #
 # monkeypatch suds Schema class for circular wsdl import sensitivity
 #
-def schema_patch_init(self, root, baseurl, options, container=None):
+def schema_patch_init(self, root, baseurl, options, loaded_schemata=None,
+                      container=None
     self.instance_cache[baseurl] = self
     self.__schema_init__(root, baseurl, options, container=container)
 
 
-def schema_patch_instance(self, root, baseurl, options):
+def schema_patch_instance(self, root, baseurl, loaded_schemata, options):
     if baseurl not in self.instance_cache:
         self.instance_cache[baseurl] = Schema(root, baseurl, options)
 
