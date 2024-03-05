@@ -19,7 +19,7 @@ setup(
     packages=['panopto_client'],
     include_package_data=True,
     install_requires = [
-        'suds-py3~=1.4',
+        'suds~=1.1',
         'commonconf',
         'mock',
     ],
