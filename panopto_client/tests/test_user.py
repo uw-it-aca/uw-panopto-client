@@ -24,24 +24,21 @@ class PanoptoUserManagementTest(TestCase):
         except TypeError:
             pass
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns0:ListUsersRequest',
-            'ns0:Pagination', 'ns0:UserSortField'])
+             'ns0:ListUsersRequest', 'ns0:Pagination', 'ns0:UserSortField'])
         mock_request.assert_called_with('ListUsers', {
-            'auth': mock.sentinel.instance,
             'parameters': mock.sentinel.instance, 'searchQuery': 'test query'})
 
     def test_getUserByKey(self, mock_request, mock_instance):
         client = UserManagement()
         result = client.getUserByKey('test-user-key')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo'])
+        self.assertEqual(instance_args(mock_instance.call_args_list), [])
         mock_request.assert_called_with('GetUserByKey', {
-            'auth': mock.sentinel.instance, 'userKey': 'test-user-key'})
+            'userKey': 'test-user-key'})
 
     def test_getUsers(self, mock_request, mock_instance):
         client = UserManagement()
         result = client.getUsers(['test-user-id'])
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns2:ArrayOfguid'])
+            'ns2:ArrayOfguid'])
         mock_request.assert_called_with('GetUsers', {
-            'auth': mock.sentinel.instance, 'userIds': mock.sentinel.instance})
+            'userIds': mock.sentinel.instance})

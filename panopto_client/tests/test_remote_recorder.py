@@ -24,18 +24,16 @@ class RemoteRecorderManagementTest(TestCase):
         client = RemoteRecorderManagement()
         result = client.getRemoteRecordersById('test-recorder-id')
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns4:ArrayOfguid'])
+            'ns4:ArrayOfguid'])
         mock_request.assert_called_with('GetRemoteRecordersById', {
-            'auth': mock.sentinel.instance,
             'remoteRecorderIds': mock.sentinel.instance})
 
     def test_getRemoteRecordersByExternalId(self, mock_request, mock_instance):
         client = RemoteRecorderManagement()
         result = client.getRemoteRecordersByExternalId('test-external-id')
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns4:ArrayOfstring'])
+            'ns4:ArrayOfstring'])
         mock_request.assert_called_with('GetRemoteRecordersByExternalId', {
-            'auth': mock.sentinel.instance,
             'externalIds': mock.sentinel.instance})
 
     def test_scheduleRecording(self, mock_request, mock_instance):
@@ -47,11 +45,10 @@ class RemoteRecorderManagementTest(TestCase):
             end_time=datetime(2013, 3, 15, 10, 0, 0),
             recorder_id='test-recorder-id')
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:ArrayOfRecorderSettings', 'ns0:AuthenticationInfo',
-            'ns0:RecorderSettings'])
+            'ns0:ArrayOfRecorderSettings', 'ns0:RecorderSettings'])
         mock_request.assert_called_with('ScheduleRecording', {
-            'auth': mock.sentinel.instance, 'name': 'test-name',
-            'folderId': 'test-folder-id', 'isBroadcast': False,
+            'name': 'test-name', 'folderId': 'test-folder-id',
+            'isBroadcast': False,
             'start': datetime(2013, 3, 15, 9, 0),
             'end': datetime(2013, 3, 15, 10, 0),
             'recorderSettings': mock.sentinel.instance})
@@ -63,19 +60,17 @@ class RemoteRecorderManagementTest(TestCase):
         except TypeError:
             pass
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns0:Pagination'])
+            'ns0:Pagination'])
         mock_request.assert_called_with('ListRecorders', {
-            'auth': mock.sentinel.instance,
             'pagination': mock.sentinel.instance, 'sortBy': 'Name'})
 
     def test_updateRemoteRecorderExternalId(self, mock_request, mock_instance):
         client = RemoteRecorderManagement()
         result = client.updateRemoteRecorderExternalId(
             'test-recorder-id', 'test-external-id')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo'])
+        self.assertEqual(instance_args(mock_instance.call_args_list), [])
         mock_request.assert_called_with('UpdateRemoteRecorderExternalId', {
-            'auth': mock.sentinel.instance, 'externalId': 'test-external-id',
+            'externalId': 'test-external-id',
             'remoteRecorderId': 'test-recorder-id'})
 
     def test_updateRecordingTime(self, mock_request, mock_instance):
@@ -83,9 +78,8 @@ class RemoteRecorderManagementTest(TestCase):
         result = client.updateRecordingTime(
             'test-session-id', start=datetime(2013, 3, 15, 9, 0, 0),
             end=datetime(2013, 3, 15, 10, 0, 0))
-        self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo'])
+        self.assertEqual(instance_args(mock_instance.call_args_list), [])
         mock_request.assert_called_with('UpdateRecordingTime', {
-            'auth': mock.sentinel.instance, 'sessionId': 'test-session-id',
+            'sessionId': 'test-session-id',
             'start': datetime(2013, 3, 15, 9, 0),
             'end': datetime(2013, 3, 15, 10, 0)})

@@ -30,7 +30,6 @@ class UserManagement(PanoptoAPI):
             parameters.Pagination = self.pagination()
 
             response = self._request('ListUsers', {
-                'auth': self.authentication_info(),
                 'parameters': parameters,
                 'searchQuery': search_query
             })
@@ -46,12 +45,10 @@ class UserManagement(PanoptoAPI):
 
     def getUserByKey(self, user_key):
         return self._request('GetUserByKey', {
-            'auth': self.authentication_info(),
             'userKey': user_key
         })
 
     def getUsers(self, user_ids):
         return self._request('GetUsers', {
-            'auth': self.authentication_info(),
             'userIds': self.guid_list(guids=user_ids)
         })

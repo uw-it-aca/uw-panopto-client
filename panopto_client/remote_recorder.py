@@ -22,21 +22,18 @@ class RemoteRecorderManagement(PanoptoAPI):
 
     def getRemoteRecordersById(self, remote_recorder_id):
         return self._request('GetRemoteRecordersById', {
-            'auth': self.authentication_info(),
             'remoteRecorderIds': self.guid_list(
                 ns='ns4:ArrayOfguid', guids=[remote_recorder_id]),
         })
 
     def getRemoteRecordersByExternalId(self, external_id):
         return self._request('GetRemoteRecordersByExternalId', {
-            'auth': self.authentication_info(),
             'externalIds': self.parameter_list(params=[external_id]),
         })
 
     def scheduleRecording(self, name, folder_id, is_broadcast,
                           start_time, end_time, recorder_id):
         return self._request('ScheduleRecording', {
-            'auth': self.authentication_info(),
             'name': name,
             'folderId': folder_id,
             'isBroadcast': is_broadcast,
@@ -53,7 +50,6 @@ class RemoteRecorderManagement(PanoptoAPI):
             self._set_page_number(page)
 
             response = self._request('ListRecorders', {
-                'auth': self.authentication_info(),
                 'pagination': self.pagination(),
                 'sortBy': sort_by
             })
@@ -69,7 +65,6 @@ class RemoteRecorderManagement(PanoptoAPI):
 
     def updateRemoteRecorderExternalId(self, remote_recorder_id, external_id):
         return self._request('UpdateRemoteRecorderExternalId', {
-            'auth': self.authentication_info(),
             'externalId': external_id,
             'remoteRecorderId': remote_recorder_id
         })
@@ -78,7 +73,6 @@ class RemoteRecorderManagement(PanoptoAPI):
     # xs:dateTime start, xs:dateTime end)
     def updateRecordingTime(self, session_id, start, end):
         return self._request('UpdateRecordingTime', {
-            'auth': self.authentication_info(),
             'sessionId': session_id,
             'start': start,
             'end': end

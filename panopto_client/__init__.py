@@ -135,6 +135,9 @@ class PanoptoAPI(object):
         return self._api.factory.create(namespace)
 
     def _request(self, methodName, params={}):
+        if 'auth' not in params:
+            params['auth'] = self.authentication_info()
+
         try:
             return self._data(methodName, params)
         except WebFault as err:

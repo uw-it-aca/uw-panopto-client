@@ -21,13 +21,11 @@ class AccessManagement(PanoptoAPI):
 
     def getFolderAccessDetails(self, folder_id):
         return self._request('GetFolderAccessDetails', {
-            'auth': self.authentication_info(),
             'folderId': folder_id,
         })
 
     def grantUsersAccessToFolder(self, folder_id, user_ids, role):
         return self._request('GrantUsersAccessToFolder', {
-            'auth': self.authentication_info(),
             'folderId': folder_id,
             'userIds': self.guid_list(ns='ns2:ArrayOfguid', guids=user_ids),
             'role': self.access_role(role),
@@ -35,7 +33,6 @@ class AccessManagement(PanoptoAPI):
 
     def revokeUsersAccessFromFolder(self, folder_id, user_ids, role):
         return self._request('RevokeUsersAccessFromFolder', {
-            'auth': self.authentication_info(),
             'folderId': folder_id,
             'userIds': self.guid_list(ns='ns2:ArrayOfguid', guids=user_ids),
             'role': self.access_role(role),
@@ -43,13 +40,11 @@ class AccessManagement(PanoptoAPI):
 
     def getSessionAccessDetails(self, session_id):
         return self._request('GetSessionAccessDetails', {
-            'auth': self.authentication_info(),
             'sessionId': session_id
         })
 
     def updateSessionIsPublic(self, session_id, is_public):
         return self._request('UpdateSessionIsPublic', {
-            'auth': self.authentication_info(),
             'sessionId': session_id,
             'isPublic': is_public
         })
