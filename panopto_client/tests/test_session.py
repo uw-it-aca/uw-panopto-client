@@ -126,6 +126,16 @@ class SessionManagementTest(TestCase):
             'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
             'description': 'description'})
 
+    def test_provisionExternalCourse(self, mock_request, mock_instance):
+        client = SessionManagement()
+        result = client.provisionExternalCourse(
+            'test course name', 'test-course-id')
+        self.assertEqual(instance_args(mock_instance.call_args_list), [
+            'ns1:AuthenticationInfo'])
+        mock_request.assert_called_with('ProvisionExternalCourse', {
+            'auth': mock.sentinel.instance, 'name': 'test course name',
+            'externalId': 'test-course-id'})
+
     def test_getSessionsById(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.getSessionsById(['test-session-id'])
