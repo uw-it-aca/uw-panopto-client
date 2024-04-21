@@ -63,6 +63,16 @@ class SessionManagement(PanoptoAPI):
 
         return result
 
+    def getAllFoldersWithExternalContextByExternalId(
+            self, folder_external_ids, provider_names=[]):
+        return self._request('GetAllFoldersWithExternalContextByExternalId', {
+            'auth': self.authentication_info(ns=self.auth_ns),
+            'folderExternalIds': self.parameter_list(
+                ns=self.param_ns, params=folder_external_ids),
+            'providerNames': self.parameter_list(
+                ns=self.param_ns, params=provider_names),
+        })
+
     def getAllFoldersByExternalId(self, folder_external_ids,
                                   provider_names=[]):
         return self._request('GetAllFoldersByExternalId', {
