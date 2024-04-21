@@ -26,12 +26,27 @@ class SessionManagementTest(TestCase):
             pass
         self.assertEqual(
             instance_args(mock_instance.call_args_list), [
+                'ns1:AuthenticationInfo',
                 'ns1:FolderSortField',
                 'ns1:ListFoldersRequest',
                 'ns1:Pagination'])
         mock_request.assert_called_with('GetFoldersList', {
+            'auth': mock.sentinel.instance,
             'request': mock.sentinel.instance,
             'searchQuery': 'test query'})
+
+    def test_getAllFoldersByExternalId(self, mock_request, mock_instance):
+        client = SessionManagement()
+        result = client.getAllFoldersByExternalId(['test-external-id'])
+        self.assertEqual(
+            instance_args(mock_instance.call_args_list), [
+                'ns1:AuthenticationInfo',
+                'ns6:ArrayOfstring',
+                'ns6:ArrayOfstring'])
+        mock_request.assert_called_with('GetAllFoldersByExternalId', {
+            'auth': mock.sentinel.instance,
+            'folderExternalIds': mock.sentinel.instance,
+            'providerNames': mock.sentinel.instance})
 
     def test_getFoldersWIthExternalContextList(
             self, mock_request, mock_instance):
@@ -44,63 +59,60 @@ class SessionManagementTest(TestCase):
             pass
         self.assertEqual(
             instance_args(mock_instance.call_args_list), [
+                'ns1:AuthenticationInfo',
                 'ns1:FolderSortField',
                 'ns1:ListFoldersRequest',
                 'ns1:Pagination'])
         mock_request.assert_called_with('GetFoldersWithExternalContextList', {
-            'request': mock.sentinel.instance,
+            'auth': mock.sentinel.instance, 'request': mock.sentinel.instance,
             'searchQuery': 'test query'})
-
-    def test_getAllFoldersByExternalId(self, mock_request, mock_instance):
-        client = SessionManagement()
-        result = client.getAllFoldersByExternalId(['test-external-id'])
-        self.assertEqual(
-            instance_args(mock_instance.call_args_list), [
-                'ns6:ArrayOfstring',
-                'ns6:ArrayOfstring'])
-        mock_request.assert_called_with('GetAllFoldersByExternalId', {
-            'folderExternalIds': mock.sentinel.instance,
-            'providerNames': mock.sentinel.instance})
 
     def test_getFoldersByExternalId(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.getFoldersByExternalId(['test-external-id'])
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfstring'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfstring'])
         mock_request.assert_called_with('GetFoldersByExternalId', {
+            'auth': mock.sentinel.instance,
             'folderExternalIds': mock.sentinel.instance})
 
     def test_addFolder(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.addFolder('test-folder-name')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('AddFolder', {
-            'name': 'test-folder-name',
+            'auth': mock.sentinel.instance, 'name': 'test-folder-name',
             'parentFolder': None, 'isPublic': 'false'})
 
     def test_updateFolderName(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.updateFolderName('test-folder-id', 'test-folder-name')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateFolderName', {
-            'folderId': 'test-folder-id', 'name': 'test-folder-name'})
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
+            'name': 'test-folder-name'})
 
     def test_updateFolderExternalId(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.updateFolderExternalId(
             'test-folder-id', 'test-external-id')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateFolderExternalId', {
-            'folderId': 'test-folder-id', 'externalId': 'test-external-id'})
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
+            'externalId': 'test-external-id'})
 
     def test_updateFolderExternalIdWithProvider(self, mock_request,
                                                 mock_instance):
         client = SessionManagement()
         result = client.updateFolderExternalIdWithProvider(
             'test-folder-id', 'test-external-id', 'test-provider-name')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateFolderExternalIdWithProvider', {
-            'folderId': 'test-folder-id',
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
             'externalId': 'test-external-id',
             'SiteMembershipProviderName': 'test-provider-name'})
 
@@ -108,64 +120,66 @@ class SessionManagementTest(TestCase):
         client = SessionManagement()
         result = client.updateFolderDescription(
             'test-folder-id', 'description')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateFolderDescription', {
-            'folderId': 'test-folder-id', 'description': 'description'})
-
-    def test_provisionExternalCourse(self, mock_request, mock_instance):
-        client = SessionManagement()
-        result = client.provisionExternalCourse(
-            'test course name', 'test-course-id')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
-        mock_request.assert_called_with('ProvisionExternalCourse', {
-            'name': 'test course name', 'externalId': 'test-course-id'})
+            'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
+            'description': 'description'})
 
     def test_getSessionsById(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.getSessionsById(['test-session-id'])
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfguid'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfguid'])
         mock_request.assert_called_with('GetSessionsById', {
+            'auth': mock.sentinel.instance,
             'sessionIds': mock.sentinel.instance})
 
     def test_getSessionsByExternalId(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.getSessionsByExternalId(['test-external-id'])
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfstring'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfstring'])
         mock_request.assert_called_with('GetSessionsByExternalId', {
+            'auth': mock.sentinel.instance,
             'sessionExternalIds': mock.sentinel.instance})
 
     def test_updateSessionExternalId(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.updateSessionExternalId(
             'test-session-id', 'test-external-id')
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateSessionExternalId', {
-            'sessionId': 'test-session-id', 'externalId': 'test-external-id'})
+            'auth': mock.sentinel.instance, 'sessionId': 'test-session-id',
+            'externalId': 'test-external-id'})
 
     def test_updateSessionOwner(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.updateSessionOwner('test-session-id', 'owner-key')
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfguid'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfguid'])
         mock_request.assert_called_with('UpdateSessionOwner', {
+            'auth': mock.sentinel.instance,
             'sessionIds': mock.sentinel.instance,
             'newOwnerUserKey': 'owner-key'})
 
     def test_updateSessionIsBroadcast(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.updateSessionIsBroadcast('test-session-id', False)
-        self.assertEqual(instance_args(mock_instance.call_args_list), [])
+        self.assertEqual(instance_args(mock_instance.call_args_list),
+                         ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('UpdateSessionIsBroadcast', {
-            'sessionId': 'test-session-id', 'isBroadcast': False})
+            'auth': mock.sentinel.instance, 'sessionId': 'test-session-id',
+            'isBroadcast': False})
 
     def test_moveSessions(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.moveSessions(['test-session-id'], 'test-folder-id')
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfguid'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfguid'])
         mock_request.assert_called_with('MoveSessions', {
+            'auth': mock.sentinel.instance,
             'sessionIds': mock.sentinel.instance,
             'folderId': 'test-folder-id'})
 
@@ -173,6 +187,7 @@ class SessionManagementTest(TestCase):
         client = SessionManagement()
         result = client.deleteSessions(['test-session-id'])
         self.assertEqual(instance_args(mock_instance.call_args_list),
-                         ['ns6:ArrayOfguid'])
+                         ['ns1:AuthenticationInfo', 'ns6:ArrayOfguid'])
         mock_request.assert_called_with('DeleteSessions', {
+            'auth': mock.sentinel.instance,
             'sessionIds': mock.sentinel.instance})
