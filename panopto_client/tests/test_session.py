@@ -48,12 +48,12 @@ class SessionManagementTest(TestCase):
             'folderExternalIds': mock.sentinel.instance,
             'providerNames': mock.sentinel.instance})
 
-    def test_getFoldersWIthExternalContextList(
+    def test_getFoldersWithExternalContextList(
             self, mock_request, mock_instance):
         mock_request.TotalNumberResults = 0
         client = SessionManagement()
         try:
-            result = client.getFoldersWIthExternalContextList(
+            result = client.getFoldersWithExternalContextList(
                 search_query='test query')
         except TypeError:
             pass

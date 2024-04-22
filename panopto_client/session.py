@@ -23,7 +23,7 @@ class SessionManagement(PanoptoAPI):
         return self._folder_search('GetFoldersList', search_query,
                                    sort_by, sort_increasing)
 
-    def getFoldersWIthExternalContextList(self, search_query='', sort_by='Name',
+    def getFoldersWithExternalContextList(self, search_query='', sort_by='Name',
                        sort_increasing='true'):
         return self._folder_search('GetFoldersWithExternalContextList',
                                    search_query, sort_by, sort_increasing)
