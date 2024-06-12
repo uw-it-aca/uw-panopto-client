@@ -48,6 +48,25 @@ class SessionManagementTest(TestCase):
             'folderExternalIds': mock.sentinel.instance,
             'providerNames': mock.sentinel.instance})
 
+    def test_getFoldersWithExternalContextList(
+            self, mock_request, mock_instance):
+        mock_request.TotalNumberResults = 0
+        client = SessionManagement()
+        try:
+            result = client.getFoldersWithExternalContextList(
+                search_query='test query')
+        except TypeError:
+            pass
+        self.assertEqual(
+            instance_args(mock_instance.call_args_list), [
+                'ns1:AuthenticationInfo',
+                'ns1:FolderSortField',
+                'ns1:ListFoldersRequest',
+                'ns1:Pagination'])
+        mock_request.assert_called_with('GetFoldersWithExternalContextList', {
+            'auth': mock.sentinel.instance, 'request': mock.sentinel.instance,
+            'searchQuery': 'test query'})
+
     def test_getFoldersByExternalId(self, mock_request, mock_instance):
         client = SessionManagement()
         result = client.getFoldersByExternalId(['test-external-id'])
@@ -106,6 +125,16 @@ class SessionManagementTest(TestCase):
         mock_request.assert_called_with('UpdateFolderDescription', {
             'auth': mock.sentinel.instance, 'folderId': 'test-folder-id',
             'description': 'description'})
+
+    def test_provisionExternalCourse(self, mock_request, mock_instance):
+        client = SessionManagement()
+        result = client.provisionExternalCourse(
+            'test course name', 'test-course-id')
+        self.assertEqual(instance_args(mock_instance.call_args_list), [
+            'ns1:AuthenticationInfo'])
+        mock_request.assert_called_with('ProvisionExternalCourse', {
+            'auth': mock.sentinel.instance, 'name': 'test course name',
+            'externalId': 'test-course-id'})
 
     def test_getSessionsById(self, mock_request, mock_instance):
         client = SessionManagement()

@@ -24,7 +24,6 @@ class PanoptoUsageTest(TestCase):
         except TypeError:
             pass
         self.assertEqual(instance_args(mock_instance.call_args_list), [
-            'ns0:AuthenticationInfo', 'ns0:Pagination'])
+            'ns0:Pagination'])
         mock_request.assert_called_with('GetUserDetailedUsage', {
-            'auth': mock.sentinel.instance, 'userId': 'test-user-id',
-            'pagination': mock.sentinel.instance})
+             'userId': 'test-user-id', 'pagination': mock.sentinel.instance})

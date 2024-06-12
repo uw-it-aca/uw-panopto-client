@@ -22,7 +22,6 @@ class UsageReporting(PanoptoAPI):
             self._set_page_number(page)
 
             response = self._request('GetUserDetailedUsage', {
-                'auth': self.authentication_info(),
                 'userId': user_id,
                 'pagination': self.pagination()
             })

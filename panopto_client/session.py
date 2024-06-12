@@ -18,8 +18,19 @@ class SessionManagement(PanoptoAPI):
             wsdl='SessionManagement.svc?wsdl',
             port='BasicHttpBinding_ISessionManagement')
 
-    def getFoldersList(self, search_query='', sort_by='Name',
-                       sort_increasing='true'):
+    def getFoldersList(
+            self, search_query='', sort_by='Name', sort_increasing='true'):
+        return self._folder_search('GetFoldersList', search_query,
+                                   sort_by, sort_increasing)
+
+    def getFoldersWithExternalContextList(
+            self, search_query='', sort_by='Name', sort_increasing='true'):
+        return self._folder_search('GetFoldersWithExternalContextList',
+                                   search_query, sort_by, sort_increasing)
+
+    def _folder_search(
+            self, method, search_query='', sort_by='Name',
+            sort_increasing='true'):
         request = self._instance('ns1:ListFoldersRequest')
         request.ParentFolderId = None
         request.PublicOnly = 'false'
@@ -35,7 +46,7 @@ class SessionManagement(PanoptoAPI):
 
             request.Pagination = self.pagination(ns='ns1:Pagination')
 
-            response = self._request('GetFoldersList', {
+            response = self._request(method, {
                 'auth': self.authentication_info(ns=self.auth_ns),
                 'request': request,
                 'searchQuery': search_query
@@ -52,6 +63,16 @@ class SessionManagement(PanoptoAPI):
                 break
 
         return result
+
+    def getAllFoldersWithExternalContextByExternalId(
+            self, folder_external_ids, provider_names=[]):
+        return self._request('GetAllFoldersWithExternalContextByExternalId', {
+            'auth': self.authentication_info(ns=self.auth_ns),
+            'folderExternalIds': self.parameter_list(
+                ns=self.param_ns, params=folder_external_ids),
+            'providerNames': self.parameter_list(
+                ns=self.param_ns, params=provider_names),
+        })
 
     def getAllFoldersByExternalId(self, folder_external_ids,
                                   provider_names=[]):
@@ -106,6 +127,13 @@ class SessionManagement(PanoptoAPI):
             'auth': self.authentication_info(ns=self.auth_ns),
             'folderId': folder_id,
             'description': description
+        })
+
+    def provisionExternalCourse(self, course_name, course_id):
+        return self._request('ProvisionExternalCourse', {
+            'auth': self.authentication_info(ns=self.auth_ns),
+            'name': course_name,
+            'externalId': course_id
         })
 
     def getSessionsById(self, session_ids):
