@@ -18,18 +18,19 @@ class SessionManagement(PanoptoAPI):
             wsdl='SessionManagement.svc?wsdl',
             port='BasicHttpBinding_ISessionManagement')
 
-    def getFoldersList(self, search_query='', sort_by='Name',
-                       sort_increasing='true'):
+    def getFoldersList(
+            self, search_query='', sort_by='Name', sort_increasing='true'):
         return self._folder_search('GetFoldersList', search_query,
                                    sort_by, sort_increasing)
 
-    def getFoldersWithExternalContextList(self, search_query='', sort_by='Name',
-                       sort_increasing='true'):
+    def getFoldersWithExternalContextList(
+            self, search_query='', sort_by='Name', sort_increasing='true'):
         return self._folder_search('GetFoldersWithExternalContextList',
                                    search_query, sort_by, sort_increasing)
 
-    def _folder_search(self, method, search_query='',
-                       sort_by='Name', sort_increasing='true'):
+    def _folder_search(
+            self, method, search_query='', sort_by='Name',
+            sort_increasing='true'):
         request = self._instance('ns1:ListFoldersRequest')
         request.ParentFolderId = None
         request.PublicOnly = 'false'
