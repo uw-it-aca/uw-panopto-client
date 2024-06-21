@@ -21,6 +21,7 @@ setup(
     install_requires = [
         'suds~=1.1',
         'commonconf',
+        'prometheus-client',
         'mock',
     ],
     license='Apache License, Version 2.0',

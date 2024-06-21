@@ -9,12 +9,26 @@ from logging import getLogger
 from suds.client import Client
 from suds.xsd.schema import Schema
 from suds import WebFault
+from prometheus_client import Histogram, Counter
 from panopto_client.mock_data import PanoptoMockData
 from weakref import WeakValueDictionary
 from hashlib import sha1
+import time
 import sys
 
 URL_BASE = '/Panopto/PublicAPI/4.6'
+
+# prepare for prometheus observations
+prometheus_duration = Histogram('soapclient_request_duration_seconds',
+                                'Soapclient request duration (seconds)',
+                                ['method'])
+prometheus_status = Histogram('soapclient_response_status_code',
+                              'Soapclient request response status code',
+                              ['method'],
+                              buckets=[100, 200, 300, 400, 500])
+prometheus_timeout = Counter('soapclient_request_timeout',
+                             'Soapclient request timeout count',
+                             ['method'])
 
 
 class PanoptoAPIException(Exception):
@@ -139,7 +153,10 @@ class PanoptoAPI(object):
             params['auth'] = self.authentication_info()
 
         try:
-            return self._data(methodName, params)
+            start_time = time.time()
+            response = self._data(methodName, params)
+            self.prometheus_duration(methodName, time.time() - start_time)
+            return response
         except WebFault as err:
             self._log.exception(err)
             raise PanoptoAPIException("Cannot connect to '{}': {}".format(
@@ -149,6 +166,7 @@ class PanoptoAPI(object):
                 err, str(sys.exc_info()[0])))
 
             if type(err.args[0]) is tuple and type(err.args[0][0]) is int:
+                self.prometheus_status(methodName, err.args[0][0])
                 if err.args[0][0] in [401, 403]:
                     errmsg = 'The request cannot be authenticated ({})'.format(
                         err.args[0][0])
@@ -159,6 +177,7 @@ class PanoptoAPI(object):
                     errmsg = 'Unanticipated error: {} ({})'.format(
                         err.args[0][1], err.args[0][0])
             else:
+                self.prometheus_timeout(methodName)
                 errmsg = 'Error connecting: {}'.format(err)
 
             raise PanoptoAPIException(errmsg)
@@ -171,3 +190,13 @@ class PanoptoAPI(object):
             'reply': PanoptoMockData().mock(self._port, methodName, params)
         }
         return self._api.service[self._port][methodName](**params)
+
+    def prometheus_duration(self, method, duration):
+        prometheus_duration.labels(method).observe(duration)
+
+    def prometheus_status(self, method, status):
+        prometheus_status.labels(method).observe(
+            (int(status) // 100) * 100)
+
+    def prometheus_timeout(self, method):
+        prometheus_timeout.labels(method).inc()
