@@ -90,6 +90,13 @@ class SessionManagement(PanoptoAPI):
                 ns=self.param_ns, params=provider_names),
         })
 
+    def getFoldersById(self, folder_ids):
+        return self._request('GetFoldersById', {
+            'auth': self.authentication_info(ns=self.auth_ns),
+            'folderIds': self.parameter_list(
+                ns=self.param_ns, params=folder_ids),
+        })
+
     def getFoldersByExternalId(self, folder_external_ids):
         return self._request('GetFoldersByExternalId', {
             'auth': self.authentication_info(ns=self.auth_ns),
