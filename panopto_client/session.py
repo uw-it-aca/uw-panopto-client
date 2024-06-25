@@ -19,23 +19,27 @@ class SessionManagement(PanoptoAPI):
             port='BasicHttpBinding_ISessionManagement')
 
     def getFoldersList(
-            self, search_query='', sort_by='Name', sort_increasing='true'):
-        return self._folder_search('GetFoldersList', search_query,
-                                   sort_by, sort_increasing)
+            self, search_query='', parent_folder_id=None,
+            sort_by='Name', sort_increasing='true'):
+        return self._folder_search(
+            'GetFoldersList',
+            search_query, parent_folder_id, sort_by, sort_increasing)
 
     def getFoldersWithExternalContextList(
-            self, search_query='', sort_by='Name', sort_increasing='true'):
-        return self._folder_search('GetFoldersWithExternalContextList',
-                                   search_query, sort_by, sort_increasing)
+            self, search_query='', parent_folder_id=None,
+            sort_by='Name', sort_increasing='true'):
+        return self._folder_search(
+            'GetFoldersWithExternalContextList',
+            search_query, parent_folder_id, sort_by, sort_increasing)
 
     def _folder_search(
-            self, method, search_query='', sort_by='Name',
-            sort_increasing='true'):
+            self, method, search_query='', parent_folder_id=None,
+            sort_by='Name', sort_increasing='true'):
         request = self._instance('ns1:ListFoldersRequest')
-        request.ParentFolderId = None
+        request.ParentFolderId = parent_folder_id
         request.PublicOnly = 'false'
         request.SortBy = self._instance('ns1:FolderSortField')
-        request.SortBy = sort_by,
+        request.SortBy = sort_by
         request.SortIncreasing = sort_increasing
 
         result = []
@@ -56,7 +60,9 @@ class SessionManagement(PanoptoAPI):
                 break
 
             if response.Results:
-                for f in response.Results.Folder:
+                result_array = method \
+                    .replace('GetFolders', 'Folder').replace('List', '')
+                for f in getattr(response.Results, result_array, []):
                     result.append(f)
 
             if len(result) >= response.TotalNumberResults:
@@ -84,6 +90,12 @@ class SessionManagement(PanoptoAPI):
                 ns=self.param_ns, params=provider_names),
         })
 
+    def getFoldersById(self, folder_ids):
+        return self._request('GetFoldersById', {
+            'auth': self.authentication_info(ns=self.auth_ns),
+            'folderIds': self.guid_list(ns=self.guid_ns, guids=folder_ids),
+        })
+
     def getFoldersByExternalId(self, folder_external_ids):
         return self._request('GetFoldersByExternalId', {
             'auth': self.authentication_info(ns=self.auth_ns),
@@ -91,12 +103,12 @@ class SessionManagement(PanoptoAPI):
                 ns=self.param_ns, params=folder_external_ids),
         })
 
-    def addFolder(self, folder_name):
+    def addFolder(self, folder_name, parent_folder_id=None, is_public=False):
         return self._request('AddFolder', {
             'auth': self.authentication_info(ns=self.auth_ns),
             'name': folder_name,
-            'parentFolder': None,
-            'isPublic': 'false'
+            'parentFolder': parent_folder_id,
+            'isPublic': is_public
         })
 
     def updateFolderName(self, folder_id, name):

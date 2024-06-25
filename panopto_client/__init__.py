@@ -159,8 +159,9 @@ class PanoptoAPI(object):
             return response
         except WebFault as err:
             self._log.exception(err)
-            raise PanoptoAPIException("Cannot connect to '{}': {}".format(
-                    self._wsdl, err))
+            raise PanoptoAPIException("{}".format(
+                err.fault.faultstring if (
+                    hasattr(err.fault, 'faultstring')) else err))
         except Exception as err:
             self._log.error('Error: ({}) {}'.format(
                 err, str(sys.exc_info()[0])))
