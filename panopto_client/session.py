@@ -103,12 +103,12 @@ class SessionManagement(PanoptoAPI):
                 ns=self.param_ns, params=folder_external_ids),
         })
 
-    def addFolder(self, folder_name):
+    def addFolder(self, folder_name, parent_folder_id=None, is_public=False):
         return self._request('AddFolder', {
             'auth': self.authentication_info(ns=self.auth_ns),
             'name': folder_name,
-            'parentFolder': None,
-            'isPublic': 'false'
+            'parentFolder': parent_folder_id,
+            'isPublic': is_public
         })
 
     def updateFolderName(self, folder_id, name):
