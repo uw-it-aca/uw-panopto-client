@@ -83,7 +83,7 @@ class SessionManagementTest(TestCase):
                          ['ns1:AuthenticationInfo'])
         mock_request.assert_called_with('AddFolder', {
             'auth': mock.sentinel.instance, 'name': 'test-folder-name',
-            'parentFolder': None, 'isPublic': 'false'})
+            'parentFolder': None, 'isPublic': False})
 
     def test_updateFolderName(self, mock_request, mock_instance):
         client = SessionManagement()
