@@ -19,7 +19,7 @@ setup(
     packages=['panopto_client'],
     include_package_data=True,
     install_requires = [
-        'suds~=1.1',
+        'suds~=1.2',
         'commonconf',
         'prometheus-client',
         'mock',
@@ -28,7 +28,7 @@ setup(
     description='An application providing access to the Panopto Video Platform SOAP API',
     long_description=README,
     url='https://github.com/uw-it-aca/uw-panopto-client',
-    author = "UW-IT T&LS",
+    author = "UWIT Student & Educational Technology Services",
     author_email = "aca-it@uw.edu",
     classifiers=[
         'Environment :: Web Environment',
